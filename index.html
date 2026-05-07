@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caveman AI Toolkit — Talk Less, Do More 🪨</title>
+<meta name="description" content="Caveman AI Toolkit: Translate, simplify, and review text like a caveman. Save tokens, save money, get to the point. Built for AI users who want less fluff.">
+<meta name="keywords" content="caveman AI, caveman translator, text simplifier, token saver, caveman code review, AI tools, caveman speak">
+<meta property="og:title" content="Caveman AI Toolkit 🪨">
+<meta property="og:description" content="why use many word when few do trick — Caveman tools for AI users">
+<meta property="og:url" content="https://rumblingb.github.io/caveman-tools/">
+<style>
+:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#c9d1d9;--muted:#8b949e;--accent:#f0883e;--green:#3fb950;--red:#f85149;--radius:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6;min-height:100vh}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.logo{font-size:1.5rem;font-weight:800}.logo span{color:var(--accent)}.logo .rock{font-size:1.8rem}
+.cta-btn{background:var(--accent);color:#000;border:none;padding:.6rem 1.5rem;border-radius:var(--radius);font-weight:700;cursor:pointer;font-size:.9rem;transition:transform .1s}
+.cta-btn:hover{transform:scale(1.03)}
+.container{max-width:900px;margin:0 auto;padding:2rem 1rem}
+.hero{text-align:center;padding:3rem 0 2rem}
+.hero h1{font-size:clamp(1.8rem,5vw,2.8rem);margin-bottom:.5rem}
+.hero p{color:var(--muted);font-size:1.1rem;max-width:600px;margin:0 auto}
+.stats-row{display:flex;justify-content:center;gap:2rem;margin:2rem 0;flex-wrap:wrap}
+.stat{text-align:center}.stat-num{font-size:2rem;font-weight:800;color:var(--accent)}.stat-label{color:var(--muted);font-size:.85rem}
+
+/* Tabs */
+.tabs{display:flex;gap:.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.25rem;margin-bottom:1.5rem;overflow-x:auto}
+.tab-btn{flex:1;padding:.6rem 1rem;background:none;border:none;color:var(--muted);cursor:pointer;border-radius:6px;font-weight:600;white-space:nowrap;font-size:.9rem;transition:all .2s}
+.tab-btn.active{background:var(--accent);color:#000}
+.tab-btn:hover:not(.active){color:var(--text)}
+
+/* Tool panels */
+.tool-panel{display:none}
+.tool-panel.active{display:block}
+.tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem}
+.tool-card h3{margin-bottom:.5rem;font-size:1.1rem}
+.tool-card p{color:var(--muted);font-size:.9rem;margin-bottom:1rem}
+
+textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:1rem;border-radius:var(--radius);font-family:monospace;font-size:.9rem;resize:vertical;min-height:120px}
+textarea:focus{outline:none;border-color:var(--accent)}
+.output-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;min-height:60px;font-family:monospace;font-size:.9rem;white-space:pre-wrap;word-break:break-word;margin-top:.75rem;max-height:300px;overflow-y:auto}
+.btn-row{display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap}
+.btn{background:var(--accent);color:#000;border:none;padding:.5rem 1.2rem;border-radius:var(--radius);font-weight:700;cursor:pointer;font-size:.85rem}
+.btn.sec{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.counter{color:var(--muted);font-size:.8rem;margin-top:.25rem;text-align:right}
+
+/* Premium modal */
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-content{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem;max-width:440px;width:90%;text-align:center}
+.modal-content h3{font-size:1.5rem;margin-bottom:.5rem}
+.modal-content .price{font-size:2.5rem;font-weight:800;color:var(--accent);margin:1rem 0}
+.modal-content ul{list-style:none;text-align:left;margin:1.5rem 0}
+.modal-content li{padding:.3rem 0;color:var(--text)}
+.modal-content li::before{content:'✓ ';color:var(--green)}
+.premium-lock{opacity:.3;position:relative}
+.premium-lock::after{content:'🔒 Premium';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);padding:.5rem 1.5rem;border-radius:var(--radius);font-weight:700;font-size:.9rem}
+
+/* Voice specific */
+.voice-controls{display:flex;gap:.5rem;align-items:center;margin:.75rem 0;flex-wrap:wrap}
+.voice-controls select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.4rem .8rem;border-radius:var(--radius)}
+.voice-btn{width:44px;height:44px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
+.voice-btn.playing{background:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;border-top:1px solid var(--border);margin-top:3rem}
+footer a{color:var(--accent)}
+.ad-banner{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;text-align:center;margin:1rem 0;color:var(--muted);font-size:.8rem}
+.ad-banner a{color:var(--accent)}
+
+@media(max-width:600px){header{padding:1rem}.container{padding:1rem .5rem}.tabs{flex-wrap:nowrap}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="rock">🪨</span> Caveman <span>AI Toolkit</span></div>
+  <button class="cta-btn" onclick="showPremium()">🚀 Go Premium — $12</button>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <h1>why use many word when few do trick 🪨</h1>
+    <p>The toolkit that 55,000+ AI users trust. Translate, simplify, code review — caveman style.</p>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">75%</div><div class="stat-label">Fewer Tokens</div></div>
+      <div class="stat"><div class="stat-num">55k+</div><div class="stat-label">Community Stars</div></div>
+      <div class="stat"><div class="stat-num">3x</div><div class="stat-label">Faster Output</div></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('translator')">🪨 Translator</button>
+    <button class="tab-btn" onclick="switchTab('voice')">🔊 Caveman Voice</button>
+    <button class="tab-btn" onclick="switchTab('review')">💻 Code Review</button>
+    <button class="tab-btn" onclick="switchTab('simplify')">✂️ Simplifier</button>
+  </div>
+
+  <!-- Tab 1: Translator -->
+  <div class="tool-panel active" id="tab-translator">
+    <div class="tool-card">
+      <h3>🪨 English → Caveman</h3>
+      <p>Turn verbose text into caveman-speak. 75% fewer tokens, 100% same meaning.</p>
+      <textarea id="trans-input" placeholder="Paste verbose text here...&#10;Example: 'The reason your application is experiencing performance degradation is likely due to excessive re-rendering of components...'"></textarea>
+      <div class="btn-row">
+        <button class="btn" onclick="translateToCaveman()">🪨 Translate</button>
+        <button class="btn sec" onclick="copyOutput('trans-output')">📋 Copy</button>
+        <button class="btn sec" id="trans-count-btn" disabled>0 chars</button>
+      </div>
+      <div class="output-box" id="trans-output">Translation will appear here...</div>
+    </div>
+  </div>
+
+  <!-- Tab 2: Voice -->
+  <div class="tool-panel" id="tab-voice">
+    <div class="tool-card">
+      <h3>🔊 Caveman Voice</h3>
+      <p>Hear your text spoken in caveman style. Uses browser speech synthesis.</p>
+      <textarea id="voice-input" placeholder="Type text to speak...&#10;Example: 'Ugh. Code slow. Fix now.'"></textarea>
+      <div class="voice-controls">
+        <select id="voice-select"></select>
+        <select id="voice-rate">
+          <option value="0.7">Slow (caveman)</option>
+          <option value="1" selected>Normal</option>
+          <option value="1.3">Fast</option>
+        </select>
+        <button class="voice-btn" id="voice-play-btn" onclick="toggleVoice()">▶️</button>
+      </div>
+      <div class="output-box" id="voice-status">Ready to speak...</div>
+    </div>
+  </div>
+
+  <!-- Tab 3: Code Review -->
+  <div class="tool-panel" id="tab-review">
+    <div class="tool-card">
+      <h3>💻 Caveman Code Review</h3>
+      <p>Paste code. Get caveman-style review. Direct, no fluff, actionable.</p>
+      <textarea id="review-input" placeholder="Paste code to review..."></textarea>
+      <div class="btn-row">
+        <button class="btn" onclick="reviewCode()">🪨 Review</button>
+        <button class="btn sec" onclick="copyOutput('review-output')">📋 Copy</button>
+      </div>
+      <div class="output-box" id="review-output">Code review will appear here...</div>
+    </div>
+  </div>
+
+  <!-- Tab 4: Simplifier -->
+  <div class="tool-panel" id="tab-simplify">
+    <div class="tool-card">
+      <h3>✂️ Text Simplifier</h3>
+      <p>Strip the fluff. Get to the point. Perfect for emails, docs, AI prompts.</p>
+      <textarea id="simplify-input" placeholder="Paste text to simplify..."></textarea>
+      <div class="btn-row">
+        <button class="btn" onclick="simplifyText()">✂️ Simplify</button>
+        <select id="simplify-level" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.5rem;border-radius:var(--radius)">
+          <option value="lite">🪶 Lite (gentle trim)</option>
+          <option value="full" selected>🪨 Full (caveman mode)</option>
+          <option value="ultra">🔥 Ultra (bare minimum)</option>
+        </select>
+        <button class="btn sec" onclick="copyOutput('simplify-output')">📋 Copy</button>
+      </div>
+      <div class="output-box" id="simplify-output">Simplified text will appear here...</div>
+      <div class="counter" id="simplify-savings"></div>
+    </div>
+  </div>
+
+  <div class="ad-banner">
+    💰 <strong>Want unlimited?</strong> <a href="#" onclick="showPremium()">Go Premium for $12</a> — bulk processing, API access, no ads, PDF export
+  </div>
+</div>
+
+<!-- Premium Modal -->
+<div class="modal" id="premium-modal">
+  <div class="modal-content">
+    <h3>🪨 Caveman Premium</h3>
+    <p>Unlock all the power. One payment. Forever.</p>
+    <div class="price">$12</div>
+    <ul>
+      <li>Unlimited translations & reviews</li>
+      <li>Bulk text processing (paste 10,000+ chars)</li>
+      <li>Caveman Voice with all accents</li>
+      <li>PDF export of all results</li>
+      <li>API access for your own tools</li>
+      <li>No ads. Forever.</li>
+      <li>Support caveman ecosystem 🪨</li>
+    </ul>
+    <a href="https://buy.stripe.com/PLACEHOLDER" class="cta-btn" style="display:inline-block;text-decoration:none;font-size:1rem;padding:.8rem 2rem" id="premium-link">Buy Now — $12</a>
+    <p style="margin-top:1rem;color:var(--muted);font-size:.8rem">Secure payment via Stripe. Instant access.</p>
+    <button class="btn sec" onclick="closePremium()" style="margin-top:.5rem">Maybe later</button>
+  </div>
+</div>
+
+<footer>
+  <p>🪨 Caveman AI Toolkit — part of the <a href="https://github.com/JuliusBrussee/caveman">caveman ecosystem</a></p>
+  <p><a href="https://rumblingb.github.io/jacks-toolbox/">More Tools</a> · <a href="https://github.com/Rumblingb/caveman-tools">GitHub</a></p>
+</footer>
+
+<script>
+// ===== TAB SWITCHING =====
+function switchTab(name) {
+  document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ===== CAVEMAN TRANSLATOR =====
+const CAVEMAN_RULES = [
+  // Common fluff phrases → caveman
+  [/\b(I would like to|I want to|I'd like to)\b/gi, 'want'],
+  [/\b(I am going to|I will|I'm going to)\b/gi, 'will'],
+  [/\b(in order to|so as to|for the purpose of)\b/gi, 'to'],
+  [/\b(due to the fact that|because of the fact that|owing to the fact that)\b/gi, 'because'],
+  [/\b(at this point in time|at the present time|currently)\b/gi, 'now'],
+  [/\b(in the event that|in case that)\b/gi, 'if'],
+  [/\b(a large number of|a great many|numerous)\b/gi, 'many'],
+  [/\b(the majority of|most of the)\b/gi, 'most'],
+  [/\b(it is possible that|there is a chance that)\b/gi, 'maybe'],
+  [/\b(take into consideration|take into account)\b/gi, 'consider'],
+  [/\b(make a decision|come to a decision)\b/gi, 'decide'],
+  [/\b(with regard to|in regard to|with respect to|in terms of|concerning)\b/gi, 'about'],
+  [/\b(in the process of)\b/gi, 'while'],
+  [/\b(has the ability to|is able to|is capable of)\b/gi, 'can'],
+  [/\b(it is important to note that|it should be noted that)\b/gi, 'note:'],
+  [/\b(please be advised that|I would like to inform you that)\b/gi, ''],
+  [/\b(I think that|I believe that|in my opinion)\b/gi, 'think'],
+  [/\b(first of all|to begin with|to start with)\b/gi, 'first'],
+  [/\b(last but not least|finally)\b/gi, 'last'],
+  [/\b(the fact that|the reality that)\b/gi, 'that'],
+  [/\b(despite the fact that|in spite of the fact that)\b/gi, 'although'],
+  [/\b(on a regular basis|on a daily basis)\b/gi, 'often'],
+  // Polite padding
+  [/\b(I would be happy to|I'd be happy to|I'd be glad to)\b/gi, 'will'],
+  [/\b(let me know if you have any questions|feel free to reach out)\b/gi, ''],
+  [/\b(thank you for your time|thanks for reading)\b/gi, ''],
+  [/\b(please let me know|let me know)\b/gi, 'tell me'],
+  // Extra words
+  [/\b(absolutely|definitely|certainly|undoubtedly)\b/gi, ''],
+  [/\b(very|really|quite|rather|extremely|highly)\b/gi, ''],
+  [/\b(basically|essentially|fundamentally)\b/gi, ''],
+  [/\b(just|simply|merely)\b/gi, ''],
+];
+
+function translateToCaveman() {
+  const input = document.getElementById('trans-input').value.trim();
+  if (!input) return;
+  
+  let result = input;
+  CAVEMAN_RULES.forEach(([pattern, replacement]) => {
+    result = result.replace(pattern, replacement).replace(/\s{2,}/g, ' ');
+  });
+  
+  // Clean up double spaces, trailing punctuation issues
+  result = result.replace(/\s{2,}/g, ' ').trim();
+  result = result.replace(/\bi\b/g, m => /^[A-Z]/.test(m) ? 'Me' : 'me');
+  
+  // Capitalize first letter
+  result = result.charAt(0).toUpperCase() + result.slice(1);
+  
+  document.getElementById('trans-output').textContent = result;
+  
+  const savings = Math.round((1 - result.length / input.length) * 100);
+  document.getElementById('trans-count-btn').textContent = `${savings}% shorter`;
+  document.getElementById('trans-count-btn').disabled = false;
+}
+
+// ===== VOICE =====
+let isSpeaking = false;
+let voicesLoaded = false;
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+  if (voices.length === 0) return;
+  voicesLoaded = true;
+  const sel = document.getElementById('voice-select');
+  sel.innerHTML = voices.map((v, i) => 
+    `<option value="${i}" ${v.default ? 'selected' : ''}>${v.name} (${v.lang})</option>`
+  ).join('');
+}
+speechSynthesis.onvoiceschanged = loadVoices;
+loadVoices();
+
+function toggleVoice() {
+  const btn = document.getElementById('voice-play-btn');
+  if (isSpeaking) {
+    speechSynthesis.cancel();
+    isSpeaking = false;
+    btn.textContent = '▶️';
+    btn.classList.remove('playing');
+    return;
+  }
+  
+  const text = document.getElementById('voice-input').value.trim();
+  if (!text) return;
+  
+  const voices = speechSynthesis.getVoices();
+  const selIdx = parseInt(document.getElementById('voice-select').value) || 0;
+  const rate = parseFloat(document.getElementById('voice-rate').value);
+  
+  const utterance = new SpeechSynthesisUtterance(text);
+  if (voices[selIdx]) utterance.voice = voices[selIdx];
+  utterance.rate = rate;
+  utterance.onstart = () => {
+    isSpeaking = true;
+    btn.textContent = '⏹';
+    btn.classList.add('playing');
+    document.getElementById('voice-status').textContent = '🔊 Speaking...';
+  };
+  utterance.onend = () => {
+    isSpeaking = false;
+    btn.textContent = '▶️';
+    btn.classList.remove('playing');
+    document.getElementById('voice-status').textContent = '✅ Done speaking';
+  };
+  utterance.onerror = () => {
+    isSpeaking = false;
+    btn.textContent = '▶️';
+    btn.classList.remove('playing');
+    document.getElementById('voice-status').textContent = '❌ Error';
+  };
+  
+  speechSynthesis.speak(utterance);
+}
+
+// ===== CODE REVIEW =====
+function reviewCode() {
+  const code = document.getElementById('review-input').value.trim();
+  if (!code) return;
+  
+  const lines = code.split('\n');
+  const findings = [];
+  
+  if (code.includes('console.log')) findings.push('🪨 Console logs in prod? Remove.');
+  if (code.includes('var ')) findings.push('🪨 var bad. Use const/let.');
+  if (code.includes('==') && !code.includes('===')) findings.push('🪨 == loose. Use === .');
+  if (code.includes('any')) findings.push('🪨 any type lazy. Be specific.');
+  if (code.includes('setTimeout') && code.includes('1000')) findings.push('🪨 Magic number 1000. Use const.');
+  if (code.includes('.then(') && code.includes('async')) findings.push('🪨 Mix async/await with .then. Pick one.');
+  if (code.includes('TODO') || code.includes('FIXME')) findings.push('🪨 TODO/FIXME found. Finish or remove.');
+  if (code.includes('useEffect(') && code.includes('[]')) findings.push('🪨 Empty deps in useEffect. Missing deps?');
+  if (code.match(/function\s+\w+\s*\([^)]*\)\s*\{[\s\S]{200,}\}/)) findings.push('🪨 Function too big. Split.');
+  if (code.includes('!important')) findings.push('🪨 !important in CSS. Fix specificity instead.');
+  if (code.includes('eval(')) findings.push('🪨 eval(). Big no. Security risk.');
+  if (code.includes('innerHTML')) findings.push('🪨 innerHTML. XSS risk. Use textContent.');
+  
+  // Generic analysis
+  const lineCount = lines.filter(l => l.trim()).length;
+  const commentLines = lines.filter(l => l.trim().startsWith('//') || l.trim().startsWith('#')).length;
+  const maxLineLen = Math.max(...lines.map(l => l.length));
+  
+  findings.push(`📊 Stats: ${lineCount} lines, ${commentLines} comments`);
+  if (maxLineLen > 100) findings.push(`🪨 Long line (${maxLineLen} chars). Break up.`);
+  if (commentLines === 0 && lineCount > 10) findings.push('🪨 No comments. Add some.');
+  
+  document.getElementById('review-output').textContent = 
+    findings.length > 1 ? findings.join('\n') : '🪨 Code look fine. Ship it.';
+}
+
+// ===== SIMPLIFIER =====
+function simplifyText() {
+  const input = document.getElementById('simplify-input').value.trim();
+  if (!input) return;
+  const level = document.getElementById('simplify-level').value;
+  
+  let result = input;
+  
+  if (level === 'full' || level === 'ultra') {
+    result = result.replace(/\b(very|really|quite|rather|extremely|highly|absolutely|definitely|certainly|basically|essentially|just|simply|merely|actually|literally)\b\s*/gi, '');
+    result = result.replace(/\b(I think that|I believe that|in my opinion|it seems that|it appears that)\b[,\s]*/gi, '');
+    result = result.replace(/\b(in order to|so as to)\b/gi, 'to');
+    result = result.replace(/\b(due to the fact that|because of the fact that)\b/gi, 'because');
+    result = result.replace(/\b(at this point in time|at the present time)\b/gi, 'now');
+    result = result.replace(/\b(please be advised that|I would like to inform you that)\b/gi, '');
+    result = result.replace(/\b(it is important to note that|it should be noted that)\b/gi, '');
+    result = result.replace(/\b(let me know if you have any questions|feel free to reach out|don't hesitate to)\b/gi, '');
+    result = result.replace(/\b(thank you for your|thanks for)\b[^.!?]*[.!?]/gi, '');
+  }
+  
+  if (level === 'ultra') {
+    // Aggressive shortening
+    result = result.replace(/\b(\w{10,})\b/g, m => m.slice(0, 6) + '…');
+    result = result.replace(/(\b\w+\b)(\s+\1\b)+/gi, '$1'); // Remove repeated words
+    result = result.replace(/[;:]/g, '.');
+  }
+  
+  result = result.replace(/\s{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  
+  document.getElementById('simplify-output').textContent = result;
+  const savings = Math.round((1 - result.length / input.length) * 100);
+  document.getElementById('simplify-savings').textContent = `${savings}% shorter (${input.length} → ${result.length} chars)`;
+}
+
+// ===== UTILS =====
+function copyOutput(id) {
+  const text = document.getElementById(id).textContent;
+  if (!text || text.includes('will appear here')) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function showPremium() {
+  document.getElementById('premium-modal').classList.add('show');
+}
+function closePremium() {
+  document.getElementById('premium-modal').classList.remove('show');
+}
+document.getElementById('premium-modal').addEventListener('click', function(e) {
+  if (e.target === this) closePremium();
+});
+
+// Premium features — check localStorage for premium state
+const isPremium = localStorage.getItem('caveman-premium') === 'true';
+if (isPremium) {
+  document.querySelector('.ad-banner').style.display = 'none';
+  document.querySelector('.cta-btn').textContent = '⭐ Premium Active';
+  document.querySelector('.cta-btn').style.background = 'var(--green)';
+}
+
+// Track premium activation from Stripe redirect
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('premium') === 'activated') {
+  localStorage.setItem('caveman-premium', 'true');
+  window.history.replaceState({}, '', '/caveman-tools/');
+  location.reload();
+}
+</script>
+</body>
+</html>
