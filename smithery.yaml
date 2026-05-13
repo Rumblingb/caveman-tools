@@ -1,0 +1,14 @@
+startCommand:
+  type: http
+  configSchema:
+    type: object
+    properties: {}
+  commandFunction: |
+    (config) => ({url: 'https://rumblingb.github.io/caveman-tools'})
+
+displayName: "Caveman AI Toolkit Premium"
+description: "Translate, simplify, review, and rewrite text like a caveman. Save 75% on AI tokens with the viral caveman ecosystem."
+categories:
+  - "AI"
+  - "Text"
+  - "Productivity"
